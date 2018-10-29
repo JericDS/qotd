@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:mock="http://www.mulesoft.org/schema/mule/mock"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:munit="http://www.mulesoft.org/schema/mule/munit" xmlns:spring="http://www.springframework.org/schema/beans" xmlns:core="http://www.mulesoft.org/schema/mule/core" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/mock http://www.mulesoft.org/schema/mule/mock/current/mule-mock.xsd
+http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd
+http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd
+http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
+    <munit:config name="munit" doc:name="MUnit configuration"/>
+    <spring:beans>
+        <spring:import resource="classpath:sys-translate-rest-api-calls/invoke-translate-rest-api.xml"/>
+        <spring:import resource="classpath:global-config.xml"/>
+        <spring:import resource="classpath:error-handling.xml"/>
+    </spring:beans>
+    
+    <munit:test name="invoke-translate-api-test-suite-qotd-api:\positive-scenario:subflowTest" description="Test">
+    	<mock:when messageProcessor=".*:.*" doc:name="Positive Translate Rest API Mock">
+            <mock:with-attributes>
+                <mock:with-attribute name="name" whereValue="#[matchContains('')]"/>
+            </mock:with-attributes>
+            <mock:then-return payload="#[]">
+                <mock:inbound-properties>
+                    <mock:inbound-property key="http.status" value="200"/>
+                </mock:inbound-properties>
+            </mock:then-return>
+         </mock:when>
+         
+        <flow-ref name="qotd-api:\sys-invoke-translate-rest-api:subflow" doc:name="Flow-ref to qotd-api:\sys-invoke-translate-rest-api:subflow"/>
+        <munit:assert-on-equals expectedValue="200" actualValue="#[message.inboundProperties.'http.status']" doc:name="Assert HTTP Status Equals 200"/>
+    </munit:test>
+    
+    <munit:test name="invoke-translate-api-test-suite-qotd-api:\negative-scenario:subflowTest" description="MUnit Test">
+    	<mock:when messageProcessor=".*:.*" doc:name="Status 429 Translate Rest API Mock">
+            <mock:then-return payload="#[]">
+                <mock:inbound-properties>
+                    <mock:inbound-property key="http.status" value="429"/>
+                </mock:inbound-properties>
+            </mock:then-return>
+         </mock:when>
+         
+        <flow-ref name="qotd-api:\sys-invoke-translate-rest-api:subflow" doc:name="Flow-ref to qotd-api:\sys-invoke-translate-rest-api:subflow"/>
+        <munit:assert-not-same expectedValue="200" actualValue="#[message.inboundProperties.'http.status']" doc:name="Assert HTTP Status Not Equals 200"/>
+    </munit:test>
+    <munit:test name="invoke-translate-api-test-suite-qotd-api:\negative-405-scenario:subflowTest" description="MUnit Test">
+    	<mock:when messageProcessor=".*:.*" doc:name="Status 405 Translate Rest API Mock">
+            <mock:then-return payload="#[]">
+                <mock:inbound-properties>
+                    <mock:inbound-property key="http.status" value="405"/>
+                </mock:inbound-properties>
+            </mock:then-return>
+         </mock:when>
+         
+        <flow-ref name="qotd-api:\sys-invoke-translate-rest-api:subflow" doc:name="Flow-ref to qotd-api:\sys-invoke-translate-rest-api:subflow"/>
+        <munit:assert-not-same expectedValue="200" actualValue="#[message.inboundProperties.'http.status']" doc:name="Assert HTTP Status Not Equals 200"/>
+    </munit:test>
+</mule>

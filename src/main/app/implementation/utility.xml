@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:file="http://www.mulesoft.org/schema/mule/file"
+	xmlns:jms="http://www.mulesoft.org/schema/mule/jms"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:spring="http://www.springframework.org/schema/beans" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.mulesoft.org/schema/mule/file http://www.mulesoft.org/schema/mule/file/current/mule-file.xsd
+http://www.mulesoft.org/schema/mule/jms http://www.mulesoft.org/schema/mule/jms/current/mule-jms.xsd
+http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd
+http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
+
+    <sub-flow name="qotd-api:\create-append-file:subflow">
+        <logger message="Log Start Create/AppendTo File." level="INFO" doc:name="Log Start Create/AppendTo File"/>
+        <file:outbound-endpoint path="${work.directory}" outputPattern="QOTD_#[server.dateTime.format(&quot;MMddyyyy&quot;)]" responseTimeout="10000" doc:name="FILE /Users/jericdelossantos/Documents/Exercise1" connector-ref="QOTD_File_Configuration"/>
+        <logger message="Log End Create/AppendTo File." level="INFO" doc:name="Log End Create/AppendTo File"/>
+    </sub-flow>
+    
+    <sub-flow name="qotd-api:\publish-to-activemq-topic:subflow">
+        <logger message="Log Start Publish Json to ActiveMQ Topic." level="INFO" doc:name="Log Start Publish Json to ActiveMQ Topic"/>
+		<jms:outbound-endpoint topic="qotd" connector-ref="QOTD_ActiveMQ" doc:name="JMS Publish qotd TOPIC"/>
+        <logger message="Log End Publish Json to ActiveMQ Topic" level="INFO" doc:name="Log End Publish Json to ActiveMQ Topic"/>
+	</sub-flow>
+
+</mule>

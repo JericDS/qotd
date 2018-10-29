@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:metadata="http://www.mulesoft.org/schema/mule/metadata" xmlns:jms="http://www.mulesoft.org/schema/mule/jms"
+	xmlns:file="http://www.mulesoft.org/schema/mule/file"
+	xmlns:dw="http://www.mulesoft.org/schema/mule/ee/dw"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:spring="http://www.springframework.org/schema/beans" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd
+http://www.mulesoft.org/schema/mule/jms http://www.mulesoft.org/schema/mule/jms/current/mule-jms.xsd
+http://www.mulesoft.org/schema/mule/file http://www.mulesoft.org/schema/mule/file/current/mule-file.xsd
+http://www.mulesoft.org/schema/mule/ee/dw http://www.mulesoft.org/schema/mule/ee/dw/current/dw.xsd
+http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
+ 
+
+    <sub-flow name="qotd-api:\create-quote-author-date-file:subflow">
+        <logger message="Log Start Create file." level="INFO" doc:name="Log Start Create File"/>
+        <dw:transform-message doc:name="QOTD JSON to Quote Author String, FlowVar: EnglishQOTD" metadata:id="77bb56aa-15ef-4b85-90b5-aeca02f08251">
+            <dw:input-payload doc:sample="sample_data/string.dwl" mimeType="application/json"/>
+            <dw:set-payload><![CDATA[%dw 1.0
+%output application/java
+---
+payload.contents.quotes.quote[0] ++ " " ++ payload.contents.quotes.author[0] ++ " " ++ payload.contents.quotes.date[0] as :date {format: "yyyy-MM-dd"} as :string{format: "MMddyyyy"}]]></dw:set-payload>
+            <dw:set-variable variableName="EnglishQotd"><![CDATA[%dw 1.0
+%output application/java
+---
+payload.contents.quotes.quote[0]]]></dw:set-variable>
+        </dw:transform-message>
+        <flow-ref name="qotd-api:\create-append-file:subflow" doc:name="qotd-api:\create-append-file:subflow"/>
+        <logger message="Log End Create file. File (QOTD_#[server.dateTime.format(&quot;MMddyyyy&quot;)]) has been created. Data: #[payload]" level="INFO" doc:name="Log End Create file."/>
+    </sub-flow>
+    <sub-flow name="qotd-api:\decompress-quote:subflow">
+        <logger message="Log Start Decompress Quotes." level="INFO" doc:name="Log Start Decompress Quotes"/>
+        <dw:transform-message doc:name="Translated Quote JSON to Quote + Unix Timestamp String, FlowVar: Decompressed Quote List" metadata:id="c5c69073-39b7-45a5-9f9d-9b7696feba03">
+            <dw:input-payload doc:sample="/Users/jericdelossantos/Documents/Exercise1/CompresedTranslatedQotd" mimeType="application/json"/>
+            <dw:set-payload><![CDATA[%dw 1.0
+%output application/java
+
+---
+("\n") ++ ({(payload.translated_quote)} joinBy ((" " ++ now as :number ++ "\n"))) ++ (" " ++ now as :number)]]></dw:set-payload>
+            <dw:set-variable variableName="decompressedQotdList"><![CDATA[%dw 1.0
+%output application/java
+%var sizeOfIndex = sizeOf payload.indexes[0]
+%var quotes = payload.translated_quote
+%var counter = 0
+
+---
+"\n***Quote of the Day (Translations)***\n" ++ (
+	payload map (value, index) -> (
+		value.indexes map (v, i) ->
+		(
+			value.translated_quote[
+				(((value.indexes[i as :number - 1]) as :number - (i as :number - 1)) when (i != 0) otherwise 0) to 
+				((value.indexes[i] as :number - (i as :number + 1)))
+			]
+		) joinBy " "
+	) joinBy "\n"
+)]]></dw:set-variable>
+        </dw:transform-message>
+        <logger message="#[flowVars.decompressedQotdList]" level="INFO" doc:name="Log Decompressed QOTD"/>
+        <logger message="Log End Decompress Quotes." level="INFO" doc:name="Log End Decompress Quotes"/>
+    </sub-flow>
+    
+    <sub-flow name="qotd-api:\translate-quote:subflow">
+        <logger message="Log Start Invoke Quote Translation." level="INFO" doc:name="Log Start Invoke Quote Translation"/>
+        <set-variable variableName="langs" value="${languages}" doc:name="Set Language Array Flowvar"/>
+        <flow-ref name="qotd-api:\invoke-translation-api:subflow" doc:name="qotd-api:\invoke-translation-api:subflow"/>
+        <logger message="Log End Invoke Quote Translation." level="INFO" doc:name="Log End Invoke Quote Translation"/>
+    </sub-flow>
+    <sub-flow name="qotd-api:\compress-quote-and-publish-json-to-activemq-topic:subflow">
+        <logger message="Log Start Compress Quote and Publish to ActiveMQ Topic(qotd)." level="INFO" doc:name="Log Start Compress Quote and Publish to ActiveMQ Topic(qotd)"/>
+        <set-payload value="#[flowVars.listings.toString()]" doc:name="Set Compressed JSON QOTD Payload"/>
+        <flow-ref name="qotd-api:\publish-to-activemq-topic:subflow" doc:name="qotd-api:\publish-to-activemq-topic:subflow"/>
+        <logger message="Log End Compress Quote and Publish to ActiveMQ Topic(qotd)." level="INFO" doc:name="Log End Compress Quote and Publish to ActiveMQ Topic(qotd)"/>
+    </sub-flow>
+
+    <sub-flow name="qotd-api:\invoke-translation-api:subflow">
+    	<set-variable variableName="listings" value="#[[]]" doc:name="Set Translated Language FlowVar"/>
+        <foreach collection="#[flowVars.langs.split(&quot;,&quot;)]" doc:name="For Each Languages">
+            <flow-ref name="qotd-api:\sys-invoke-translate-rest-api:subflow" doc:name="qotd-api:\sys-invoke-translate-rest-api:subflow"/>
+            <dw:transform-message doc:name="Translated Quote JSON to Compressed Translated Quote JSON" metadata:id="04bade7a-1e31-42da-b1d2-e202f0e44c58">
+                <dw:input-payload doc:sample="/Users/jericdelossantos/Documents/Exercise1/translatorJSON" mimeType="application/json"/>
+                <dw:set-variable variableName="compressedQotd"><![CDATA[%dw 1.0
+%output application/json
+---
+{
+	"translated_quote": payload.text[0] replace " " with "" as :string ,
+	"indexes": (payload.text[0] as :string find " ") + (sizeOf payload.text[0])
+}]]></dw:set-variable>
+            </dw:transform-message>
+            <expression-transformer expression="#[flowVars.listings.add(flowVars.compressedQotd)]" doc:name="Store Compressed JSON Quotes to Array"/>
+        </foreach>
+    </sub-flow>
+    
+</mule>

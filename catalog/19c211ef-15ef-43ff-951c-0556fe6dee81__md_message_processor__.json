@@ -1,0 +1,26 @@
+{
+    "inputMessageMetadata": {
+        "messagePayload": {
+            "connectorName": "#_custom_mule_metadata_type_#",
+            "typeId": "translate"
+        }
+    },
+    "outputMessageMetadata": {
+        "flowVariables": {
+            "compressedQotd": {
+                "connectorName": "#_custom_mule_metadata_type_#",
+                "typeId": "compressedQotd"
+            },
+            "test": {
+                "connectorName": "#_custom_mule_metadata_type_#",
+                "typeId": "compressed"
+            },
+            "translatedQotd": {
+                "connectorName": "#_custom_mule_metadata_type_#",
+                "typeId": "translatedQotd"
+            }
+        }
+    },
+    "id": "19c211ef-15ef-43ff-951c-0556fe6dee81",
+    "version": "5.2.0.0"
+}

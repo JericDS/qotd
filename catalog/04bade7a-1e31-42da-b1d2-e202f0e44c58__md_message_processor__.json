@@ -1,0 +1,30 @@
+{
+    "inputMessageMetadata": {
+        "messagePayload": {
+            "connectorName": "#_custom_mule_metadata_type_#",
+            "typeId": "TranslateRestAPIJSON"
+        }
+    },
+    "outputMessageMetadata": {
+        "messagePayload": {
+            "connectorName": "#_custom_mule_metadata_type_#",
+            "typeId": "compressedQotd"
+        },
+        "flowVariables": {
+            "compressedQotd": {
+                "connectorName": "#_custom_mule_metadata_type_#",
+                "typeId": "CompressedTranslatedQuote"
+            },
+            "test": {
+                "connectorName": "#_custom_mule_metadata_type_#",
+                "typeId": "compressedQotd"
+            },
+            "compressonQuoteJSON": {
+                "connectorName": "#_custom_mule_metadata_type_#",
+                "typeId": "compressedQotd"
+            }
+        }
+    },
+    "id": "04bade7a-1e31-42da-b1d2-e202f0e44c58",
+    "version": "5.2.0.0"
+}

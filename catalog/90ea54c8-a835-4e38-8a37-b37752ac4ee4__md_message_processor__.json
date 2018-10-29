@@ -1,0 +1,11 @@
+{
+    "inputMessageMetadata": {},
+    "outputMessageMetadata": {
+        "messagePayload": {
+            "connectorName": "#_custom_mule_metadata_type_#",
+            "typeId": "compressed"
+        }
+    },
+    "id": "90ea54c8-a835-4e38-8a37-b37752ac4ee4",
+    "version": "5.2.0.0"
+}

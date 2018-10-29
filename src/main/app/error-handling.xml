@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:apikit="http://www.mulesoft.org/schema/mule/apikit"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:spring="http://www.springframework.org/schema/beans" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.mulesoft.org/schema/mule/apikit http://www.mulesoft.org/schema/mule/apikit/current/mule-apikit.xsd
+http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd
+http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
+
+
+    <apikit:mapping-exception-strategy name="qotd-api-apiKitGlobalExceptionMapping">
+        <apikit:mapping statusCode="404">
+            <apikit:exception value="org.mule.module.apikit.exception.NotFoundException"/>
+            <set-property propertyName="Content-Type" value="application/json" doc:name="Set 404 Property"/>
+            <set-payload value="Exceeded the daily limit on the amount of translated text." doc:name="Set 404 Response"/>
+        </apikit:mapping>
+        <apikit:mapping statusCode="501">
+            <apikit:exception value="org.mule.module.apikit.exception.UnsupportedMediaTypeException"/>
+            <set-property propertyName="Content-Type" value="application/json" doc:name="Set 501 Property"/>
+            <set-payload value="The specified translation direction is not supported" doc:name="Set 501 Response"/>
+        </apikit:mapping>
+        <apikit:mapping statusCode="422">
+            <apikit:exception value="org.mule.module.apikit.exception.NotAcceptableException"/>
+            <set-property propertyName="Content-Type" value="application/json" doc:name="Set 422 Property"/>
+            <set-payload value="The text cannot be translated" doc:name="Set 422 Response"/>
+        </apikit:mapping>
+        <apikit:mapping statusCode="413">
+            <apikit:exception value="org.mule.module.apikit.exception.BadRequestException"/>
+            <set-property propertyName="Content-Type" value="application/json" doc:name="Set 413 Property"/>
+            <set-payload value="Exceeded the maximum text size" doc:name="Set 413 Response"/>
+        </apikit:mapping>
+        <apikit:mapping statusCode="401">
+            <apikit:exception value="org.mule.module.apikit.exception.MethodNotAllowedException"/>
+            <set-property propertyName="Content-Type" value="application/json" doc:name="Set 401 Property"/>
+            <set-payload value="Invalid API key" doc:name="Set 401 Response"/>
+        </apikit:mapping>
+        <apikit:mapping statusCode="405">
+            <apikit:exception value="org.mule.module.apikit.exception.MethodNotAllowedException"/>
+            <set-property propertyName="Content-Type" value="application/json" doc:name="Set 405 Property"/>
+            <set-payload value="{
+	&quot;message&quot; : &quot;Method &quot; ++ #[message.inboundProperties.'http.method'] ++ &quot; not allowed for endpoint: /qotd&quot;
+}" doc:name="Set 405 Response"/>
+        </apikit:mapping>
+        <apikit:mapping statusCode="502">
+            <apikit:exception value="java.io.IOException"/>
+            <apikit:exception value="org.mule.api.transport.DispatchException"/>
+            <set-property propertyName="Content-Type" value="application/json" doc:name="Set 502 Property"/>
+            <set-payload value="{
+	&quot;message&quot; : &quot;Directory for file creation is invalid.&quot;
+}" doc:name="Set 502 Response"/>
+        </apikit:mapping>
+    </apikit:mapping-exception-strategy>
+
+</mule>

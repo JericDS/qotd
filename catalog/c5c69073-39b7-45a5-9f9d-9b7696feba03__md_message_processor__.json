@@ -1,0 +1,19 @@
+{
+    "inputMessageMetadata": {
+        "messagePayload": {
+            "connectorName": "#_custom_mule_metadata_type_#",
+            "typeId": "CompressedTranslatedQuote"
+        }
+    },
+    "outputMessageMetadata": {
+        "messagePayload": {
+            "connectorName": "#_custom_mule_metadata_type_#",
+            "typeId": "qotd"
+        },
+        "flowVariables": {
+            "CompressedQotd": {}
+        }
+    },
+    "id": "c5c69073-39b7-45a5-9f9d-9b7696feba03",
+    "version": "5.2.0.0"
+}

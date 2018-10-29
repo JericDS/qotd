@@ -1,0 +1,36 @@
+{
+    "inputMessageMetadata": {
+        "messagePayload": {
+            "connectorName": "#_custom_mule_metadata_type_#",
+            "typeId": "quote"
+        }
+    },
+    "outputMessageMetadata": {
+        "messagePayload": {
+            "connectorName": "#_custom_mule_metadata_type_#",
+            "typeId": "qotd"
+        },
+        "flowVariables": {
+            "date": {
+                "connectorName": "#_custom_mule_metadata_type_#",
+                "typeId": "date"
+            },
+            "languages": {
+                "connectorName": "#_custom_mule_metadata_type_#",
+                "typeId": "lang"
+            },
+            "qotd": {
+                "connectorName": "#_custom_mule_metadata_type_#",
+                "typeId": "qotd"
+            }
+        },
+        "outboundProperties": {
+            "languages": {
+                "connectorName": "#_custom_mule_metadata_type_#",
+                "typeId": "lang"
+            }
+        }
+    },
+    "id": "9dcf008b-11c0-4120-9c5e-c6c7f60246ea",
+    "version": "5.2.0.0"
+}

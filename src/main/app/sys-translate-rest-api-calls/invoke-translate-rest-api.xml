@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:spring="http://www.springframework.org/schema/beans" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd
+http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
+    
+    <sub-flow name="qotd-api:\sys-invoke-translate-rest-api:subflow">
+        <logger message="Log Start Invoke Translate API." level="INFO" doc:name="Log Start Invoke Translate API"/>
+    	<http:request config-ref="Translates_Https_Requst_Configuration" path="${translates.https.request.path}" method="GET" doc:name="HTTPS GET Translation REST API">
+            <http:request-builder>
+                <http:query-param paramName="text" value="#[flowVars.EnglishQotd]"/>
+                <http:query-param paramName="key" value="trnsl.1.1.20180724T084230Z.68a8a5a504b727ab.3354e9b41eadebcec6f5c8f4c10549f3a59df60e"/>
+                <http:query-param paramName="lang" value="#[payload]"/>
+            </http:request-builder>
+        </http:request>
+        <logger message="Log End Invoke Translate API." level="INFO" doc:name="Log End Invoke Translate API"/>
+	</sub-flow>
+
+</mule>

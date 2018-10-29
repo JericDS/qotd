@@ -1,0 +1,4 @@
+form: FIXEDWIDTH
+name: 'qotd'
+values: 
+- { name: 'field_0', usage: M, type: String, length: 10, format: { justify: RIGHT } }

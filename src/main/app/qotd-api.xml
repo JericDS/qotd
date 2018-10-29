@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:apikit="http://www.mulesoft.org/schema/mule/apikit" xmlns:tracking="http://www.mulesoft.org/schema/mule/ee/tracking" xmlns:wmq="http://www.mulesoft.org/schema/mule/ee/wmq" xmlns:jms="http://www.mulesoft.org/schema/mule/jms" xmlns:context="http://www.springframework.org/schema/context" xmlns:dw="http://www.mulesoft.org/schema/mule/ee/dw" xmlns:metadata="http://www.mulesoft.org/schema/mule/metadata" xmlns:file="http://www.mulesoft.org/schema/mule/file" xmlns:json="http://www.mulesoft.org/schema/mule/json" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:spring="http://www.springframework.org/schema/beans" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd
+http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/json http://www.mulesoft.org/schema/mule/json/current/mule-json.xsd
+http://www.mulesoft.org/schema/mule/file http://www.mulesoft.org/schema/mule/file/current/mule-file.xsd
+http://www.mulesoft.org/schema/mule/ee/dw http://www.mulesoft.org/schema/mule/ee/dw/current/dw.xsd
+http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-current.xsd
+http://www.mulesoft.org/schema/mule/jms http://www.mulesoft.org/schema/mule/jms/current/mule-jms.xsd
+http://www.mulesoft.org/schema/mule/ee/wmq http://www.mulesoft.org/schema/mule/ee/wmq/current/mule-wmq-ee.xsd
+http://www.mulesoft.org/schema/mule/ee/tracking http://www.mulesoft.org/schema/mule/ee/tracking/current/mule-tracking-ee.xsd
+http://www.mulesoft.org/schema/mule/apikit http://www.mulesoft.org/schema/mule/apikit/current/mule-apikit.xsd">
+
+    <flow name="qotd-api:\invoke-qotd-api-translate-api-publishto-amq:flow">
+        <http:listener config-ref="QOTD-api-Http-Listener-Configuration" path="${http.listener.path}" allowedMethods="GET" doc:name="HTTP GET Quote Of The Day API"/>
+        <logger level="INFO" doc:name="Log Start Process QOTD" message="Log [START] Processing Quote Of The Day..."/>
+        <flow-ref name="qotd-api:\sys-invoke-qotd-rest-api:subflow" doc:name="qotd-api:\sys-invoke-qotd-rest-api:subflow"/>
+<!--         <set-payload value="{     &quot;success&quot;: {         &quot;total&quot;: 1     },     &quot;contents&quot;: {         &quot;quotes&quot;: [             {                 &quot;quote&quot;: &quot;One voice can change a room, and if one voice can change a room, then it can change a city, and if it can change a city, it can change a state, and if it change a state, it can change a nation, and if it can change a nation, it can change the world. Your voice can change the world.&quot;,                 &quot;length&quot;: &quot;282&quot;,                 &quot;author&quot;: &quot;Barack Obama&quot;,                 &quot;tags&quot;: [                     &quot;change&quot;,                     &quot;inspire&quot;,                     &quot;tso-life&quot;                 ],                 &quot;category&quot;: &quot;inspire&quot;,                 &quot;date&quot;: &quot;2018-07-27&quot;,                 &quot;permalink&quot;: &quot;https://theysaidso.com/quote/4_k2mhc0jTAASnde5xReOQeF/barack-obama-one-voice-can-change-a-room-and-if-one-voice-can-change-a-room-then&quot;,                 &quot;title&quot;: &quot;Inspiring Quote of the day&quot;,                 &quot;background&quot;: &quot;https://theysaidso.com/img/bgs/man_on_the_mountain.jpg&quot;,                 &quot;id&quot;: &quot;4_k2mhc0jTAASnde5xReOQeF&quot;             }         ],         &quot;copyright&quot;: &quot;2017-19 theysaidso.com&quot;     } }" doc:name="Set Payload"/> -->
+        <flow-ref name="qotd-api:\create-quote-author-date-file:subflow" doc:name="qotd-api:\create-quote-author-date-file:subflow"/>
+        <flow-ref name="qotd-api:\translate-quote:subflow" doc:name="qotd-api:\translate-quote:subflow"/>
+        <flow-ref name="qotd-api:\compress-quote-and-publish-json-to-activemq-topic:subflow" doc:name="qotd-api:\compress-quote-and-publish-json-to-activemq-topic:subflow"/>
+        <exception-strategy ref="qotd-api-apiKitGlobalExceptionMapping" doc:name="Reference Exception Strategy"/>
+    </flow>
+    
+    <flow name="qotd-api:\substo-amq-appendto-file:flow">
+        <jms:inbound-endpoint topic="qotd" connector-ref="QOTD_ActiveMQ" doc:name="JMS Subscribe qotd TOPIC"/>
+        <flow-ref name="qotd-api:\decompress-quote:subflow" doc:name="qotd-api:\decompress-quote:subflow"/>
+        <flow-ref name="qotd-api:\create-append-file:subflow" doc:name="qotd-api:\append-quote-unix-timestamp-to-file:subflow"/>
+        <logger message="Log [END] Quote Of The Day process..." level="INFO" doc:name="Log End Process QOTD"/>
+        <exception-strategy ref="qotd-api-apiKitGlobalExceptionMapping" doc:name="Reference Exception Strategy"/>
+    </flow>
+
+</mule>

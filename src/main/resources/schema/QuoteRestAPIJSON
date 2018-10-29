@@ -1,0 +1,26 @@
+{
+    "success": {
+        "total": 1
+    },
+    "contents": {
+        "quotes": [
+            {
+                "quote": "One voice can change a room, and if one voice can change a room, then it can change a city, and if it can change a city, it can change a state, and if it change a state, it can change a nation, and if it can change a nation, it can change the world. Your voice can change the world.",
+                "length": "282",
+                "author": "Barack Obama",
+                "tags": [
+                    "change",
+                    "inspire",
+                    "tso-life"
+                ],
+                "category": "inspire",
+                "date": "2018-07-27",
+                "permalink": "https://theysaidso.com/quote/4_k2mhc0jTAASnde5xReOQeF/barack-obama-one-voice-can-change-a-room-and-if-one-voice-can-change-a-room-then",
+                "title": "Inspiring Quote of the day",
+                "background": "https://theysaidso.com/img/bgs/man_on_the_mountain.jpg",
+                "id": "4_k2mhc0jTAASnde5xReOQeF"
+            }
+        ],
+        "copyright": "2017-19 theysaidso.com"
+    }
+}

@@ -1,0 +1,11 @@
+{
+    "inputMessageMetadata": {
+        "messagePayload": {
+            "connectorName": "#_custom_mule_metadata_type_#",
+            "typeId": "QuoteRestAPIJSON"
+        }
+    },
+    "outputMessageMetadata": {},
+    "id": "77bb56aa-15ef-4b85-90b5-aeca02f08251",
+    "version": "5.2.0.0"
+}

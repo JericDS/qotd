@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:cluster="http://www.mulesoft.org/schema/mule/ee/cluster" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:file="http://www.mulesoft.org/schema/mule/file"
+	xmlns:jms="http://www.mulesoft.org/schema/mule/jms"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:spring="http://www.springframework.org/schema/beans" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-current.xsd
+http://www.mulesoft.org/schema/mule/file http://www.mulesoft.org/schema/mule/file/current/mule-file.xsd
+http://www.mulesoft.org/schema/mule/jms http://www.mulesoft.org/schema/mule/jms/current/mule-jms.xsd
+http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd
+http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
+
+    <http:listener-config name="QOTD-api-Http-Listener-Configuration" host="0.0.0.0" port="${http.listener.port}" doc:name="HTTP Listener Configuration"/>
+    <context:property-placeholder location="config/qotd-api-dev.properties"/>
+    <jms:activemq-connector name="QOTD_ActiveMQ" specification="1.1" username="admin" password="admin" brokerURL="tcp://${activemq.host}:${activemq.port}" validateConnections="true" doc:name="Active MQ"/>
+    <file:connector name="QOTD_File_Configuration" outputPattern="QOTD_#[server.dateTime.format(MMddyyyy)]" workDirectory="${work.directory}" workFileNamePattern="QOTD_#[server.dateTime.format(MMddyyyy)]" autoDelete="true" outputAppend="true" streaming="true" validateConnections="true" doc:name="File"/>
+    <http:request-config name="Quotes_Http_Request_Configuration"  host="${quotes.http.request.host}" port="${quotes.http.request.port}" doc:name="HTTP Request Configuration"/>
+    <http:request-config name="Translates_Https_Requst_Configuration" protocol="HTTPS" host="${translates.https.request.host}" port="${translates.https.request.port}" doc:name="HTTP Request Configuration"/>
+    <configuration defaultExceptionStrategy-ref="qotd-api-apiKitGlobalExceptionMapping" doc:name="QOTD_Default_Exception_Strategy">
+        <http:config useTransportForUris="false"/>
+    </configuration>
+
+</mule>
