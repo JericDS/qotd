@@ -123,6 +123,17 @@
 		    </plugins>
 		  </build>
 		</profile>
+		<profile>
+			<id>sonar</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <properties>
+                <sonar.projectKey>sys-spectre-audit-api</sonar.projectKey>
+                <sonar.projectName>sys-spectre-audit-api</sonar.projectName>
+                <sonar.sources>.</sonar.sources>
+            </properties>
+		</profile>
 	</profiles>
 	
 <!-- 	<parent> -->
