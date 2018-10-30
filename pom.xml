@@ -100,8 +100,8 @@
 		        <configuration>
 		          <deploymentType>cloudhub</deploymentType>
 		          <muleVersion>${mule.version}</muleVersion> 
-		          <username>${anypoint.username}</username> 
-		          <password>${anypoint.password}</password> 
+		          <username>JecDS</username> 
+		          <password>{FxYmxugMudwHLLzS4nihtbaEd6hA4fSSEgjvkA6vY44=}</password> 
 		          <applicationName>${artifactId}</applicationName>
 		          <environment>${cloundhub.env}</environment> 
 		          <businessGroup>${anypoint.businessGroup}</businessGroup>
