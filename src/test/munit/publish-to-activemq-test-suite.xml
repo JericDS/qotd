@@ -13,9 +13,6 @@ http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/cor
     </spring:beans>
     
     <munit:test name="new-test-suite-qotd-api:\publish-to-activemq-topic:subflowTest" description="Test">
-        <mock:when doc:name="Mock JSON to Publish">
-            <mock:then-return payload="Sample Payload"/>
-		 </mock:when>
         <flow-ref name="qotd-api:\publish-to-activemq-topic:subflow" doc:name="Flow-ref to qotd-api:\publish-to-activemq-topic:subflow"/>
         <munit:assert-not-same expectedValue="200" actualValue="#[message.inboundProperties.'http.status']" doc:name="Assert Not Equals"/>
     </munit:test>
