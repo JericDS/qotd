@@ -14,7 +14,7 @@ pipeline {
     }
     stage('Deploy CloudHub') { 
       environment {
-        ANYPOINT_CREDENTIALS = credentials('5970cd6b-c817-49f2-9a1a-85a620d29f2f')
+        ANYPOINT_CREDENTIALS = credentials('6e796489-3775-488e-b67e-9264b4793cbb')
       }
       steps {
         sh 'mvn deploy -P cloudhub -Dmule.version=3.9.0 -Danypoint.username=${ANYPOINT_CREDENTIALS_USR} -Danypoint.password=${ANYPOINT_CREDENTIALS_PSW}' 
