@@ -12,20 +12,6 @@ pipeline {
         sh 'mvn test'
       }
     }
-    stage('Sonar Analysis') {
-      steps {
-        withSonarQubeEnv('Sonar Server') {
-          sh 'mvn clean package sonar:sonar'
-        }
-      }
-    }
-    stage("Quality Gate") {
-      steps {
-        timeout(time: 1, unit: 'HOURS') {
-          waitForQualityGate abortPipeline: true
-        }
-      }
-    }
     stage('Deploy CloudHub') { 
       environment {
         ANYPOINT_CREDENTIALS = credentials('anypoint.credentials')
