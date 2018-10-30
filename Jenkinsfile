@@ -12,6 +12,11 @@ pipeline {
         sh 'mvn test'
       }
     }
+    stage('Deploy Standalone') { 
+      steps {
+        sh 'mvn deploy -P standalone'
+      }
+    }
     stage('Deploy CloudHub') { 
       environment {
         ANYPOINT_CREDENTIALS = credentials('anypoint.credentials')
