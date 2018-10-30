@@ -125,11 +125,11 @@
 		</profile>
 	</profiles>
 	
-	<parent>
-	 <groupId>com.javastreets</groupId>
-	 <artifactId>mule-maven-parent-pom</artifactId>
-	 <version>0.0.1-SNAPSHOT</version>
-	</parent>
+<!-- 	<parent> -->
+<!-- 	 <groupId>com.javastreets</groupId> -->
+<!-- 	 <artifactId>mule-maven-parent-pom</artifactId> -->
+<!-- 	 <version>0.0.1-SNAPSHOT</version> -->
+<!-- 	</parent> -->
 	
 	<!-- Mule Dependencies -->
 	<dependencies>
